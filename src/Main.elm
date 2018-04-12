@@ -1,21 +1,22 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Student exposing (..)
 
-import Html exposing (Html)
-import Html.Attributes
+import Html exposing (..)
+-- import Html.Attributes
 
 
 -- MODEL
 
 
 type alias Model =
-    {}
+    { students: List Student
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}
+    ( { students = []}
     , Cmd.none
     )
 
@@ -25,14 +26,14 @@ init =
 
 
 type Msg
-    = NoOp
-
+    = StudentsReceived (List MarshalledStudent)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
+        StudentsReceived raw ->
+            -- Run unmarshal function here
+            ( { model | students = (List.map unmarshal raw) }, Cmd.none )
 
 
 
@@ -41,24 +42,24 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Html.div
+    div
         []
-        [ Html.img
-            [ Html.Attributes.src "./img/elm.png"
-            , Html.Attributes.style [ ( "border", "1px solid black" ) ]
-            ]
-            []
-        , Html.text "Welcom to the PeoplePicker"
+        [ text "Students: "
+        , text (toString model.students)
         ]
+
+
 
 
 
 -- SUBSCRIPTIONS
 
+-- port for listening for a msg from JavaScript
+port loadUsers : (List MarshalledStudent -> msg) -> Sub msg
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    loadUsers StudentsReceived
 
 
 main : Program Never Model Msg
