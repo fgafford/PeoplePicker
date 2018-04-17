@@ -7,13 +7,13 @@ const app = Elm.Main.embed(document.getElementById('main'))
 const sampleStudents = [{
     firstName: "Bill",
     lastName: 'E',
-    birthdate: (new Date()).getTime(),
+    birthdate: '2012-5-12',
     sex: 'M'
   },
   {
     firstName: "Sall",
     lastName: 'E',
-    birthdate: (new Date()).getTime(),
+    birthdate: "2014-4-5",
     sex: 'F'
   }
 ]

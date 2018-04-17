@@ -1,12 +1,12 @@
 module Student exposing (..)
 
 import Date exposing (..)
--- import Json.Decode.Extra exposing (date)
+import Result exposing (toMaybe)
 
 type alias Student = 
   { firstName: String
   , lastName: String
-  , birthdate: Date
+  , birthdate: Maybe Date
   , sex: Sex
   }
 
@@ -15,28 +15,37 @@ type Sex = Male | Female
 type alias MarshalledStudent = 
   { firstName: String
   , lastName: String
-  , birthdate: Int
+  , birthdate: String
   , sex: String
   }
 
--- marshal : Student -> MarshalledStudent
-
-unmarshal : MarshalledStudent -> Student
-unmarshal student = 
-  let 
-    -- birthdate = 
-    --   case (fromString student.birthdate)
-    --     OK date -> 
-    --       date
-    --     Err ->
-    --       Date.Now
-
-    birthdate = (fromString (toString student.birthdate)) |> Result.withDefault (fromTime 0)
-  in 
+marshal : Student -> MarshalledStudent
+marshal student = 
+  let
+      sex = case student.sex of
+              Male ->
+                "M"
+              Female ->
+                "F"
+      birthdate = case student.birthdate of
+              Just bdate ->
+                (toString (year bdate)) ++ "-" ++ (toString (month bdate)) ++ "-" ++ (toString (day bdate))
+              Nothing ->
+                ""
+  in
     {
       firstName = student.firstName
       , lastName = student.lastName
       , birthdate = birthdate
+      , sex = sex
+    }      
+
+unmarshal : MarshalledStudent -> Student
+unmarshal student = 
+    {
+      firstName = student.firstName
+      , lastName = student.lastName
+      , birthdate = toMaybe (fromString student.birthdate)
       , sex = Male
     }
 

@@ -32,7 +32,6 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         StudentsReceived raw ->
-            -- Run unmarshal function here
             ( { model | students = (List.map unmarshal raw) }, Cmd.none )
 
 
