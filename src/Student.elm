@@ -42,11 +42,24 @@ marshal student =
 
 unmarshal : MarshalledStudent -> Student
 unmarshal student = 
+  let
+    sex = case student.sex of
+      "Male" -> 
+        Male
+      "M" -> 
+        Male
+      "Female" -> 
+        Female
+      "F" -> 
+        Female
+      _ -> 
+        Female
+  in
     {
       firstName = student.firstName
       , lastName = student.lastName
       , birthdate = toMaybe (fromString student.birthdate)
-      , sex = Male
+      , sex = sex
     }
 
 fullName : Student -> String
@@ -54,6 +67,7 @@ fullName kid =
   kid.firstName ++ " " ++ kid.lastName
 
 -- age : Student -> Int
-
+-- Given a date get the age....
+-- 
 
 -- hasBirthdaySoon: Student -> Bool

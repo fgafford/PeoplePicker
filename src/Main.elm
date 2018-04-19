@@ -2,21 +2,27 @@ port module Main exposing (..)
 
 import Student exposing (..)
 
+
 import Html exposing (..)
--- import Html.Attributes
+import Time exposing (Time)
+import Task
 
 
 -- MODEL
 
-
 type alias Model =
     { students: List Student
+    , groups: List (List Student)
+    , now: Maybe Time
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { students = []}
+    ( { students = []
+      , groups = [[]]
+      , now = Nothing 
+      }
     , Cmd.none
     )
 
@@ -27,12 +33,15 @@ init =
 
 type Msg
     = StudentsReceived (List MarshalledStudent)
+    | SetTime (Maybe Time)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         StudentsReceived raw ->
-            ( { model | students = (List.map unmarshal raw) }, Cmd.none )
+            ({ model | students = (List.map unmarshal raw) }, getTime)
+        SetTime time ->
+            ({ model | now = time }, Cmd.none)
 
 
 
@@ -44,7 +53,7 @@ view model =
     div
         []
         [ text "Students: "
-        , text (toString model.students)
+        , text (toString model)
         ]
 
 
@@ -59,6 +68,11 @@ port loadUsers : (List MarshalledStudent -> msg) -> Sub msg
 subscriptions : Model -> Sub Msg
 subscriptions model =
     loadUsers StudentsReceived
+
+
+getTime : Cmd Msg
+getTime = 
+    Task.perform (Just >> SetTime) Time.now
 
 
 main : Program Never Model Msg
