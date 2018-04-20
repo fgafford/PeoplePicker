@@ -13,7 +13,7 @@ import Task
 type alias Model =
     { students: List Student
     , groups: List (List Student)
-    , now: Maybe Time
+    , now: Time
     }
 
 
@@ -21,7 +21,7 @@ init : ( Model, Cmd Msg )
 init =
     ( { students = []
       , groups = [[]]
-      , now = Nothing 
+      , now = 1524222102.0 
       }
     , Cmd.none
     )
@@ -33,7 +33,7 @@ init =
 
 type Msg
     = StudentsReceived (List MarshalledStudent)
-    | SetTime (Maybe Time)
+    | SetTime Time
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -52,10 +52,21 @@ view : Model -> Html Msg
 view model =
     div
         []
-        [ text "Students: "
-        , text (toString model)
+        [ div []
+          [
+            text "Students: "
+            , text (toString model.students)
+          ]
+          , hr [][]
+          , div [] [
+              text "Ages: "
+              , text (model.students
+                        |> List.map (age model.now)
+                        |> List.map (Maybe.withDefault 0)
+                        |> List.map toString
+                        |> toString)
+          ]
         ]
-
 
 
 
@@ -72,7 +83,7 @@ subscriptions model =
 
 getTime : Cmd Msg
 getTime = 
-    Task.perform (Just >> SetTime) Time.now
+    Task.perform SetTime Time.now
 
 
 main : Program Never Model Msg

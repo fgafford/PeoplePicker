@@ -1,7 +1,9 @@
 module Student exposing (..)
 
 import Date exposing (..)
+import Time exposing (Time)
 import Result exposing (toMaybe)
+import DateUtils exposing (..)
 
 type alias Student = 
   { firstName: String
@@ -66,8 +68,13 @@ fullName : Student -> String
 fullName kid =
   kid.firstName ++ " " ++ kid.lastName
 
--- age : Student -> Int
--- Given a date get the age....
--- 
+age : Time -> Student -> Maybe Int
+age now s = 
+  case s.birthdate of 
+    Just b ->
+      Just <| currentAge b now
+    Nothing ->
+      Nothing
+
 
 -- hasBirthdaySoon: Student -> Bool

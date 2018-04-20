@@ -1,4 +1,4 @@
-module DateUtils exposing (isAfter)
+module DateUtils exposing (currentAge)
 
 import Date exposing (..)
 import Time exposing (Time)
@@ -19,6 +19,11 @@ asInt m =
     Nov -> 11
     Dec -> 12
 
-currentAge : Date -> Int
-currentAge d = 1
+currentAge : Date -> Time -> Int
+currentAge date now = 
+    let
+        today = fromTime now
+        yearDiff = (year today) - (year date)
+    in
+        yearDiff
 
