@@ -1,6 +1,8 @@
 port module Main exposing (..)
 
 import Student exposing (..)
+import Grouper exposing (..)
+import Dict exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -12,15 +14,16 @@ import Task
 
 type alias Model =
     { students: List Student
-    , groups: List (List Student)
+    , groups: Dict String Group
     , now: Time
     }
+
 
 
 init : ( Model, Cmd Msg )
 init =
     ( { students = []
-      , groups = [[]]
+      , groups = singleton "Empty" emptyGroup
       , now = 1524222102.0 
       }
     , Cmd.none
@@ -80,7 +83,7 @@ view model =
         [ h2 [ id "title" ] [ text "People Picker" ]
         , div [ id "studentList" ]  
             (model.students 
-                |> List.map studentInfo)
+                |> List.map (studentInfo model.now))
         ]
     
 testView : Model -> Html Msg

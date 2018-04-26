@@ -91,12 +91,12 @@ age now s =
 
 -- VIEW
   
-studentInfo : Student ->  Html msg
-studentInfo s = 
+studentInfo : Time -> Student ->  Html msg
+studentInfo t s = 
   div [ id "studentInfo" ] 
       [ ul [ class "studentAttrsList" ]
           [ li [ class "studentAttr" ] [ text <| "Name: " ++ s.firstName ++ " " ++ s.lastName]
-          , li [ class "studentAttr" ] [ text <| "Sex: " ++ (toString s.sex) ]
-          , li [ class "studentAttr" ] [ text <| "Age: " ++ "0" ]
+          , li [ class "studentAttr" ] [ text <| "Sex: " ++ toString s.sex ]
+          , li [ class "studentAttr" ] [ text <| "Age: " ++ toString (Maybe.withDefault 0 (age t s)) ]
           ]
       ]
