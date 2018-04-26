@@ -2,8 +2,8 @@ port module Main exposing (..)
 
 import Student exposing (..)
 
-
 import Html exposing (..)
+import Html.Attributes exposing (..)
 import Time exposing (Time)
 import Task
 
@@ -45,32 +45,6 @@ update msg model =
 
 
 
--- VIEW
-
-
-view : Model -> Html Msg
-view model =
-    div
-        []
-        [ div []
-          [
-            text "Students: "
-            , text (toString model.students)
-          ]
-          , hr [][]
-          , div [] [
-              text "Ages: "
-              , text (model.students
-                        |> List.map (age model.now)
-                        |> List.map (Maybe.withDefault 0)
-                        |> List.map toString
-                        |> toString)
-          ]
-        ]
-
-
-
-
 -- SUBSCRIPTIONS
 
 -- port for listening for a msg from JavaScript
@@ -94,3 +68,37 @@ main =
         , view = view
         , subscriptions = subscriptions
         }
+
+
+-- VIEW
+
+
+
+view : Model -> Html Msg 
+view model =
+    section [ id "main" ]
+        [ h2 [ id "title" ] [ text "People Picker" ]
+        , div [ id "studentList" ]  
+            (model.students 
+                |> List.map studentInfo)
+        ]
+    
+testView : Model -> Html Msg
+testView model = 
+      div
+        []
+        [ div []
+          [
+            text "Students: "
+            , text (toString model.students)
+          ]
+          , hr [][]
+          , div [] [
+              text "Ages: "
+              , text (model.students
+                        |> List.map (age model.now)
+                        |> List.map (Maybe.withDefault 0)
+                        |> List.map toString
+                        |> toString)
+          ]
+        ]

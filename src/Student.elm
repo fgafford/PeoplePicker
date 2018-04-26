@@ -5,6 +5,12 @@ import Time exposing (Time)
 import Result exposing (toMaybe)
 import DateUtils exposing (..)
 
+import Html exposing (..)
+import Html.Attributes exposing (..)
+
+
+-- MODEL
+
 type alias Student = 
   { firstName: String
   , lastName: String
@@ -20,6 +26,9 @@ type alias MarshalledStudent =
   , birthdate: String
   , sex: String
   }
+
+
+-- FUNCTIONS
 
 marshal : Student -> MarshalledStudent
 marshal student = 
@@ -78,3 +87,16 @@ age now s =
 
 
 -- hasBirthdaySoon: Student -> Bool
+
+
+-- VIEW
+  
+studentInfo : Student ->  Html msg
+studentInfo s = 
+  div [ id "studentInfo" ] 
+      [ ul [ class "studentAttrsList" ]
+          [ li [ class "studentAttr" ] [ text <| "Name: " ++ s.firstName ++ " " ++ s.lastName]
+          , li [ class "studentAttr" ] [ text <| "Sex: " ++ (toString s.sex) ]
+          , li [ class "studentAttr" ] [ text <| "Age: " ++ "0" ]
+          ]
+      ]

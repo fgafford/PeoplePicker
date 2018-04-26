@@ -23,7 +23,6 @@ currentAge : Date -> Time -> Int
 currentAge date now = 
     let
         today = fromTime now
-        yearDiff = (year today) - (year date)
     in
-        yearDiff
+        (year today) - (year date)
 
