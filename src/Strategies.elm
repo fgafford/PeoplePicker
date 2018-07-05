@@ -8,3 +8,6 @@ module Strategies exposing (..)
 
 age : Int -> Int
 age a = a
+
+sex : Int -> Int
+sex a = a

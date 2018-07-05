@@ -13,6 +13,7 @@
 module Grouper exposing (..)
 
 import Student exposing (..)
+import Strategies exposing (..)
 
 -- MODEL
 
@@ -29,6 +30,8 @@ emptyGroup =
     , previouslySelected = []
   })
 
-
-group : Int -> Int
-group a = a
+{-/| group
+  This function takes a Strategy, number of desired groups,
+  list of students and returns them in fairly divided groups.
+-}
+-- group : Strategy -> Int -> Students -> List Group
