@@ -4,11 +4,16 @@ import Student exposing (..)
 import Grouper exposing (..)
 import Dict exposing (..)
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
 import Time exposing (Time)
 import Task
 
+import Html exposing (..)
+import Html.Attributes exposing (..)
+
+import Material
+import Material.Scheme
+import Material.Button as Button
+import Material.Options as Options exposing (css)
 
 -- MODEL
 
@@ -16,6 +21,7 @@ type alias Model =
     { students: List Student
     , groups: Dict String Group
     , now: Time
+    , mdl: Material.Model
     }
 
 
@@ -24,7 +30,8 @@ init : ( Model, Cmd Msg )
 init =
     ( { students = []
       , groups = singleton "Empty" emptyGroup
-      , now = 1524222102.0 
+      , now = 1524222102.0
+      , mdl = Material.model
       }
     , Cmd.none
     )
@@ -37,6 +44,7 @@ init =
 type Msg
     = StudentsReceived (List MarshalledStudent)
     | SetTime Time
+    | Mdl (Material.Msg Msg)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -45,6 +53,8 @@ update msg model =
             ({ model | students = (List.map unmarshal raw) }, getTime)
         SetTime time ->
             ({ model | now = time }, Cmd.none)
+        Mdl msg_ ->
+            Material.update Mdl msg_ model
 
 
 
@@ -81,10 +91,19 @@ view : Model -> Html Msg
 view model =
     section [ id "main" ]
         [ h2 [ id "title" ] [ text "People Picker" ]
-        -- , div [ id "totals"] [ text <|"Total Students: " ++ (toString <| List.length model.students)]
+        , div [ id "totals"] [ studentStats model.students]
         , div [ id "studentList" ]  
             (model.students 
                 |> List.map (studentInfo model.now))
+        , div 
+            [id "takeAttendence"] 
+            [ Button.render Mdl [ 0 ] model.mdl
+                [ css "margin" "0 24px"
+                 , Button.raised
+                 , Button.primary
+                ]
+                [ text "Take Attendance"]
+            ]  |> Material.Scheme.top 
         ]
     
 testView : Model -> Html Msg

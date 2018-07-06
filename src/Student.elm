@@ -94,7 +94,7 @@ age now s =
 
 studentStats : List Student -> Html msg
 studentStats s = 
-  div [id "studentStats"]
+  div []
       [ b [] [text "Total Students: "], text (toString <| List.length s)
       -- , b [] [text "Age Range: "], text (toString )
       -- , b [] [text "Mode Age: "], text 
