@@ -4,6 +4,7 @@ import Date exposing (..)
 import Time exposing (Time)
 import Result exposing (toMaybe)
 import DateUtils exposing (..)
+import Maybe.Extra exposing (isJust, (?))
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -90,7 +91,21 @@ age now s =
 
 
 -- VIEW
-  
+
+studentStats : List Student -> Html msg
+studentStats s = 
+  div [id "studentStats"]
+      [ b [] [text "Total Students: "], text (toString <| List.length s)
+      -- , b [] [text "Age Range: "], text (toString )
+      -- , b [] [text "Mode Age: "], text 
+      ]
+
+minAge : Time -> List Student -> Int
+minAge t  s = s 
+    |> List.filterMap (age t)
+    |> List.minimum
+    |> Maybe.withDefault 0
+
 studentInfo : Time -> Student ->  Html msg
 studentInfo t s = 
   div [ id "studentInfo" ] 

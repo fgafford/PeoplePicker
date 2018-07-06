@@ -81,6 +81,7 @@ view : Model -> Html Msg
 view model =
     section [ id "main" ]
         [ h2 [ id "title" ] [ text "People Picker" ]
+        -- , div [ id "totals"] [ text <|"Total Students: " ++ (toString <| List.length model.students)]
         , div [ id "studentList" ]  
             (model.students 
                 |> List.map (studentInfo model.now))
