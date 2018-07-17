@@ -18,7 +18,8 @@ import Material.Options as Options exposing (css)
 -- MODEL
 
 type alias Model =
-    { students: List Student
+    { allStudents: List Student
+    , present: List Student
     , groups: Dict String Group
     , now: Time
     , mdl: Material.Model
@@ -28,7 +29,8 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { students = []
+    ( { allStudents = []
+      , present = []
       , groups = singleton "Empty" emptyGroup
       , now = 1524222102.0
       , mdl = Material.model
@@ -50,7 +52,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         StudentsReceived raw ->
-            ({ model | students = (List.map unmarshal raw) }, getTime)
+            ({ model | allStudents = (List.map unmarshal raw) }, getTime)
         SetTime time ->
             ({ model | now = time }, Cmd.none)
         Mdl msg_ ->
@@ -91,35 +93,55 @@ view : Model -> Html Msg
 view model =
     section [ id "main" ]
         [ h2 [ id "title" ] [ text "People Picker" ]
-        , div [ id "totals"] [ studentStats model.students]
+        , span [ id "selector"] 
+            [ (button model "All Students")
+            , (button model "Present Students")
+            ] 
+        , div [ id "totals"] 
+            [ studentStats model.allStudents]
         , div [ id "studentList" ]  
-            (model.students 
-                |> List.map (studentInfo model.now))
-        , div 
-            [id "takeAttendence"] 
-            [ Button.render Mdl [ 0 ] model.mdl
+            (studentDetailsList model model.allStudents)
+        , div [id "takeAttendence"] 
+            [ button model "Take Attendance"]
+        ]
+
+button : Model -> String -> Html Msg
+button m t = 
+        span [ id "selector"] 
+            [ Button.render Mdl [ 0 ] m.mdl
                 [ css "margin" "0 24px"
                  , Button.raised
                  , Button.primary
                 ]
-                [ text "Take Attendance"]
-            ]  |> Material.Scheme.top 
-        ]
-    
-testView : Model -> Html Msg
-testView model = 
+                [ text t]
+            ]  
+            |> Material.Scheme.top
+
+{--
+    Show a detailed list of Students
+--}
+studentDetailsList : Model -> List Student -> List (Html Msg)
+studentDetailsList m s = 
+    m.allStudents 
+        |> List.map (studentInfo m.now)
+
+{--
+    summaryView
+
+    HTML statistics overview of a list of students.
+--}
+summaryView : Model -> List Student -> Html Msg
+summaryView m s = 
       div
         []
         [ div []
-          [
-            text "Students: "
-            , text (toString model.students)
+          [ text "Students: "
+          , text (toString s)
           ]
           , hr [][]
-          , div [] [
-              text "Ages: "
-              , text (model.students
-                        |> List.map (age model.now)
+          , div [] [ text "Ages: "
+                     , text (s
+                        |> List.map (age m.now)
                         |> List.map (Maybe.withDefault 0)
                         |> List.map toString
                         |> toString)
