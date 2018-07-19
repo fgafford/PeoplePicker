@@ -99,8 +99,10 @@ view model =
             ] 
         , div [ id "totals"] 
             [ studentStats model.allStudents]
-        , div [ id "studentList" ]  
-            (studentDetailsList model model.allStudents)
+        -- , div [ id "studentList" ]  
+        --     (studentDetailsList model model.allStudents)
+        , div [ id "attendanceList"]
+            (attendanceList model.allStudents)
         , div [id "takeAttendence"] 
             [ button model "Take Attendance"]
         ]
@@ -124,6 +126,16 @@ studentDetailsList : Model -> List Student -> List (Html Msg)
 studentDetailsList m s = 
     m.allStudents 
         |> List.map (studentInfo m.now)
+
+attendanceList : List Student -> List (Html Msg)
+attendanceList s =
+    s 
+    |> List.map fullName
+    |> List.map text
+    |> List.map List.singleton
+    |> List.map (div [])
+
+
 
 {--
     summaryView

@@ -75,8 +75,7 @@ unmarshal student =
     }
 
 fullName : Student -> String
-fullName kid =
-  kid.firstName ++ " " ++ kid.lastName
+fullName s = s.firstName ++ " " ++ s.lastName
 
 age : Time -> Student -> Maybe Int
 age now s = 
