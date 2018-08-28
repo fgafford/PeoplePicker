@@ -15,6 +15,8 @@ import Material.Scheme
 import Material.Button as Button
 import Material.Options as Options exposing (css)
 
+import ExtraHtml exposing (..)
+
 -- MODEL
 
 type alias Model =
@@ -46,6 +48,7 @@ init =
 type Msg
     = StudentsReceived (List MarshalledStudent)
     | SetTime Time
+    | UpdateAttendance Student
     | Mdl (Material.Msg Msg)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -55,9 +58,29 @@ update msg model =
             ({ model | allStudents = (List.map unmarshal raw) }, getTime)
         SetTime time ->
             ({ model | now = time }, Cmd.none)
+        UpdateAttendance s ->
+            updateStudentsAttendenceStatus model s
         Mdl msg_ ->
             Material.update Mdl msg_ model
 
+
+
+{- updateStudentsAttendenceStatus
+    If student is not in list.... add them
+    If student is in list... remove them
+-}
+updateStudentsAttendenceStatus : Model -> Student -> (Model, Cmd Msg)
+updateStudentsAttendenceStatus model student = 
+    case (studentPresent model student) of
+        False ->
+            ({ model | present = student :: model.present}, Cmd.none)
+        True ->
+            ({model | present = (List.filter (\s -> (studentPresent model s) && s /= student) model.present)}, Cmd.none) {-- TODO: remove them from list here --}
+
+studentPresent : Model -> Student -> Bool
+studentPresent model s = 
+            List.filter (\x -> x == s) model.present
+            |> (\l -> 1 == (List.length l))
 
 
 -- SUBSCRIPTIONS
@@ -105,6 +128,9 @@ view model =
             (attendanceList model.allStudents)
         , div [id "takeAttendence"] 
             [ button model "Take Attendance"]
+
+        , div [ id "studentList" ]  
+             (studentDetailsList model model.present)
         ]
 
 button : Model -> String -> Html Msg
@@ -124,18 +150,13 @@ button m t =
 --}
 studentDetailsList : Model -> List Student -> List (Html Msg)
 studentDetailsList m s = 
-    m.allStudents 
-        |> List.map (studentInfo m.now)
+    s |> List.map (studentInfo m.now)
 
 attendanceList : List Student -> List (Html Msg)
-attendanceList s =
-    s 
-    |> List.map fullName
-    |> List.map text
-    |> List.map List.singleton
-    |> List.map (div [])
-
-
+attendanceList students =
+    students
+    |> List.map (\s -> (div [] [(checkbox (UpdateAttendance s) (fullName s))]))
+    |> List.map (\html -> (div [] [html]))
 
 {--
     summaryView
